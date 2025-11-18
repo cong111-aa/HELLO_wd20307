@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-
+nguyen vu
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -107,6 +107,21 @@
             background: #1e40af;
             transform: translateY(-2px);
         }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-primary { background: var(--primary); }
+
+        .btn-success:hover { background: #059669; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-primary:hover { background: #1e40af; }
 
         /* Admin Dashboard */
         .dashboard {
@@ -220,11 +235,6 @@
             margin-bottom: 15px;
         }
 
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.85rem;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -247,6 +257,7 @@
         .actions {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .badge {
@@ -271,6 +282,14 @@
             color: #166534;
         }
 
+        .tour-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
         .print-area {
             padding: 40px;
             background: white;
@@ -278,6 +297,15 @@
             border-radius: 12px;
             margin: 20px 0;
             display: none;
+        }
+
+        .print-area img {
+            max-width: 200px;
+            height: auto;
+            margin: 15px auto;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         /* Modal */
@@ -292,6 +320,7 @@
             background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
@@ -299,7 +328,9 @@
             padding: 30px;
             border-radius: 16px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
@@ -313,6 +344,18 @@
 
         .close:hover {
             color: #000;
+        }
+
+        .image-preview {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         @media print {
@@ -339,6 +382,10 @@
             }
 
             .tabs {
+                flex-direction: column;
+            }
+
+            .actions {
                 flex-direction: column;
             }
         }
@@ -404,7 +451,7 @@
 
             <!-- Tab: Quản Lý Tour -->
             <div id="tabTours" class="tab-content active">
-                <h2>Tạo Tour Mới</h2>
+                <h2 id="formTitle">Tạo Tour Mới</h2>
                 <div class="row">
                     <div class="form-group">
                         <label>Loại Tour</label>
@@ -445,13 +492,23 @@
                         <input type="number" id="tourChildPrice" value="1500000" />
                     </div>
                     <div class="form-group">
-                        <label>Ghi Chú</label>
-                        <input type="text" id="tourNote" placeholder="Bao gồm: xe, khách sạn..." />
+                        <label>Ảnh Tour</label>
+                        <input type="file" id="tourImage" accept="image/*" />
+                        <div class="image-preview" id="imagePreview"></div>
                     </div>
                 </div>
-                <button class="btn btn-success" onclick="addTour()">
-                    Tạo Tour
-                </button>
+                <div class="form-group">
+                    <label>Ghi Chú</label>
+                    <input type="text" id="tourNote" placeholder="Bao gồm: xe, khách sạn..." />
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-success" id="saveTourBtn" onclick="addTour()">
+                        Tạo Tour
+                    </button>
+                    <button class="btn btn-danger" id="cancelEditBtn" onclick="cancelEdit()" style="display:none;">
+                        Hủy
+                    </button>
+                </div>
 
                 <h3 style="margin-top: 30px;">Danh Sách Tour</h3>
                 <div id="toursList"></div>
@@ -522,6 +579,7 @@
         ];
 
         let tours = JSON.parse(localStorage.getItem('tours')) || [];
+        let editingTourId = null;
 
         const ADMIN_PASSWORD = 'admin123';
 
@@ -549,6 +607,7 @@
             loadHDVSelect();
             renderHDVList();
             renderToursList();
+            setupImagePreview();
         }
 
         function updateStats() {
@@ -627,6 +686,23 @@
         }
 
         // Tour Management
+        function setupImagePreview() {
+            const input = document.getElementById('tourImage');
+            const preview = document.getElementById('imagePreview');
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.innerHTML = '';
+                }
+            });
+        }
+
         function addTour() {
             const name = document.getElementById('tourName').value.trim();
             const type = document.getElementById('tourType').value;
@@ -636,21 +712,78 @@
             const adultPrice = parseInt(document.getElementById('tourAdultPrice').value);
             const childPrice = parseInt(document.getElementById('tourChildPrice').value);
             const note = document.getElementById('tourNote').value;
-
+            const imageInput = document.getElementById('tourImage');
+            const imageFile = imageInput.files[0];
+            
             if (!name || !departure) return alert('Vui lòng nhập tên tour và ngày khởi hành!');
 
-            const newTour = {
-                id: Date.now(),
-                name, type, hdvId: parseInt(hdvId),
-                departure, duration: parseInt(duration),
-                adultPrice, childPrice, note,
-                customers: []
+            const reader = new FileReader();
+            const saveTourData = (imageData = null) => {
+                const tourData = {
+                    id: editingTourId || Date.now(),
+                    name, type, hdvId: parseInt(hdvId),
+                    departure, duration: parseInt(duration),
+                    adultPrice, childPrice, note,
+                    customers: editingTourId ? (tours.find(t => t.id === editingTourId)?.customers || []) : [],
+                    image: imageData
+                };
+
+                if (editingTourId) {
+                    const index = tours.findIndex(t => t.id === editingTourId);
+                    tours[index] = tourData;
+                } else {
+                    tours.push(tourData);
+                }
+
+                localStorage.setItem('tours', JSON.stringify(tours));
+                renderToursList();
+                updateStats();
+                clearTourForm();
+                cancelEdit();
             };
 
-            tours.push(newTour);
-            localStorage.setItem('tours', JSON.stringify(tours));
-            renderToursList();
-            updateStats();
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = () => saveTourData(reader.result);
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveTourData(editingTourId ? tours.find(t => t.id === editingTourId)?.image : null);
+            }
+        }
+
+        function editTour(id) {
+            const tour = tours.find(t => t.id === id);
+            if (!tour) return;
+
+            editingTourId = id;
+            document.getElementById('formTitle').textContent = 'Chỉnh Sửa Tour';
+            document.getElementById('saveTourBtn').textContent = 'Cập Nhật Tour';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+            document.getElementById('tourType').value = tour.type;
+            document.getElementById('tourName').value = tour.name;
+            document.getElementById('tourHDV').value = tour.hdvId;
+            document.getElementById('tourDeparture').value = tour.departure;
+            document.getElementById('tourDuration').value = tour.duration;
+            document.getElementById('tourAdultPrice').value = tour.adultPrice;
+            document.getElementById('tourChildPrice').value = tour.childPrice;
+            document.getElementById('tourNote').value = tour.note || '';
+
+            const preview = document.getElementById('imagePreview');
+            if (tour.image) {
+                preview.innerHTML = `<img src="${tour.image}" alt="Current">`;
+            } else {
+                preview.innerHTML = '';
+            }
+
+            document.querySelector(`.tab.active`).click();
+        }
+
+        function cancelEdit() {
+            editingTourId = null;
+            document.getElementById('formTitle').textContent = 'Tạo Tour Mới';
+            document.getElementById('saveTourBtn').textContent = 'Tạo Tour';
+            document.getElementById('cancelEditBtn').style.display = 'none';
             clearTourForm();
         }
 
@@ -658,6 +791,8 @@
             document.getElementById('tourName').value = '';
             document.getElementById('tourDeparture').value = '';
             document.getElementById('tourNote').value = '';
+            document.getElementById('tourImage').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
         }
 
         function openAddCustomerModal(tourId) {
@@ -692,7 +827,7 @@
             const list = document.getElementById('toursList');
             list.innerHTML = `
         <table>
-          <tr><th>Tour</th><th>HDV</th><th>Ngày</th><th>Giá</th><th>Khách</th><th>Tổng</th><th></th></tr>
+          <tr><th>Ảnh</th><th>Tour</th><th>HDV</th><th>Ngày</th><th>Giá</th><th>Khách</th><th>Tổng</th><th></th></tr>
           ${tours.map(t => {
                 const hdv = hdvList.find(h => h.id === t.hdvId);
                 const badge = t.type === 'domestic' ? 'badge-domestic' : t.type === 'international' ? 'badge-international' : 'badge-custom';
@@ -700,6 +835,7 @@
                 const total = t.customers.reduce((s, c) => s + (c.type === 'adult' ? t.adultPrice : t.childPrice), 0);
                 return `
               <tr>
+                <td>${t.image ? `<img src="${t.image}" class="tour-image" alt="Tour">` : '<i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i>'}</td>
                 <td><strong>${t.name}</strong><br><span class="badge ${badge}">${typeText}</span></td>
                 <td>${hdv?.name || 'Chưa gán'}</td>
                 <td>${formatDate(t.departure)}<br><small>${t.duration} ngày</small></td>
@@ -710,7 +846,10 @@
                   <button class="btn btn-primary btn-sm" onclick="openAddCustomerModal(${t.id})">
                     Thêm
                   </button>
-                  <button class="btn btn-warning btn-sm" onclick="printTourInvoice(${t.id})">
+                  <button class="btn btn-warning btn-sm" onclick="editTour(${t.id})">
+                    Sửa
+                  </button>
+                  <button class="btn btn-success btn-sm" onclick="printTourInvoice(${t.id})">
                     In
                   </button>
                   <button class="btn btn-danger btn-sm" onclick="removeTour(${t.id})">
@@ -747,9 +886,11 @@
           <h1 style="color:#1d4ed8;">HÓA ĐƠN ĐẶT TOUR</h1>
           <p><strong>HDV:</strong> ${hdv?.name || 'N/A'} | <strong>Ngày in:</strong> ${new Date().toLocaleDateString('vi-VN')}</p>
         </div>
+        ${tour.image ? `<img src="${tour.image}" alt="Tour">` : ''}
         <table style="width:100%; margin-bottom:20px;">
           <tr><td><strong>Tour:</strong></td><td>${tour.name}</td></tr>
           <tr><td><strong>Khởi hành:</strong></td><td>${formatDate(tour.departure)} (${tour.duration} ngày)</td></tr>
+          <tr><td><strong>Ghi chú:</strong></td><td>${tour.note || 'Không có'}</td></tr>
         </table>
         <h3>Danh sách khách:</h3>
         <table style="width:100%; border-collapse:collapse;">
