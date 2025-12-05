@@ -114,15 +114,38 @@ ffffffffffffff
             font-size: 0.85rem;
         }
 
-        .btn-success { background: var(--success); }
-        .btn-danger { background: var(--danger); }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-primary { background: var(--primary); }
+        .btn-success {
+            background: var(--success);
+        }
 
-        .btn-success:hover { background: #059669; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-warning:hover { background: #d97706; }
-        .btn-primary:hover { background: #1e40af; }
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+        }
 
         /* Admin Dashboard */
         .dashboard {
@@ -306,7 +329,7 @@ ffffffffffffff
             margin: 15px auto;
             display: block;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Modal */
@@ -356,7 +379,7 @@ ffffffffffffff
             max-width: 100%;
             max-height: 200px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         @media print {
@@ -394,7 +417,7 @@ ffffffffffffff
 </head>
 
 <body>
-    <h1>thangthach</h1>
+    <h1>HIHIHAHA</h1>
 
     <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
@@ -691,11 +714,11 @@ ffffffffffffff
         function setupImagePreview() {
             const input = document.getElementById('tourImage');
             const preview = document.getElementById('imagePreview');
-            input.addEventListener('change', function(e) {
+            input.addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
                     };
                     reader.readAsDataURL(file);
@@ -716,7 +739,7 @@ ffffffffffffff
             const note = document.getElementById('tourNote').value;
             const imageInput = document.getElementById('tourImage');
             const imageFile = imageInput.files[0];
-            
+
             if (!name || !departure) return alert('Vui lòng nhập tên tour và ngày khởi hành!');
 
             const reader = new FileReader();
