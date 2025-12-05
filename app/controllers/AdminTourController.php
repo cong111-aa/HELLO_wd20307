@@ -101,4 +101,31 @@ class AdminTourController extends Controller
 
         $this->render('admin/tours/edit', compact('tour', 'hotels', 'transports'));
     }
+      public function show()
+    {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            $this->redirect('index.php?controller=adminTour&action=index');
+        }
+
+        $tour = $this->tourModel->find($id);
+
+        $partnerModel = new Partner();
+        $hotel = $partnerModel->find($tour['hotel_id']);
+        $transport = $partnerModel->find($tour['transport_id']);
+
+        $this->render('admin/tours/show', compact('tour', 'hotel', 'transport'));
+    }
+
+
+    public function delete()
+    {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $this->tourModel->delete($id);
+        }
+        $this->redirect('index.php?controller=adminTour&action=index');
+    }
 }
+
