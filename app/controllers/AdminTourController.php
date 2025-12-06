@@ -127,5 +127,18 @@ class AdminTourController extends Controller
         }
         $this->redirect('index.php?controller=adminTour&action=index');
     }
+        public function getToursByType()
+    {
+        $type = $_GET['type'] ?? null;
+
+        if (!$type) {
+            echo json_encode([]);
+            return;
+        }
+
+        $tours = $this->tourModel->getByType($type);
+        echo json_encode($tours);
+    }
+
 }
 
