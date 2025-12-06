@@ -2,7 +2,7 @@
 class AdminTourController extends Controller
 {
     private $tourModel;
-
+    
     public function __construct()
     {
         if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
