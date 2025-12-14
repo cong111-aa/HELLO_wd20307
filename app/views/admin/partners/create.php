@@ -6,7 +6,7 @@
         <label class="form-label">Tên đối tác</label>
         <input name="name" class="form-control" required>
     </div>
-
+    
     <div class="mb-3">
         <label class="form-label">Loại đối tác</label>
         <select name="type" class="form-select">
