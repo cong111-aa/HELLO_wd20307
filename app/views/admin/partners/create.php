@@ -6,7 +6,7 @@
         <label class="form-label">Tên đối tác</label>
         <input name="name" class="form-control" required>
     </div>
-
+    
     <div class="mb-3">
         <label class="form-label">Loại đối tác</label>
         <select name="type" class="form-select">
@@ -45,3 +45,10 @@
     <button class="btn btn-primary">Lưu</button>
     <a href="index.php?controller=partner&action=index" class="btn btn-secondary">Hủy</a>
 </form>
+Người dùng → Mở trang thêm đối tác
+          → Nhập thông tin form
+          → Nhấn nút "Lưu"
+          → Gửi dữ liệu bằng POST
+          → Controller xử lý
+          → Model lưu vào CSDL
+          → Chuyển hướng về trang danh sách

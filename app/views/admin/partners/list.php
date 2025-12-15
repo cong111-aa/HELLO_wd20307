@@ -25,3 +25,8 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+
+Click nút → gửi GET
+→ controller=partner
+→ action=create
+→ hiển thị form thêm đối tác
