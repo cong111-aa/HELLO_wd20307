@@ -39,3 +39,37 @@ class AuthController extends Controller
         $this->redirect('index.php?controller=auth&action=login');
     }
 }
+| Thành phần         | Vai trò                     |
+| ------------------ | --------------------------- |
+| **AuthController** | Xử lý đăng nhập, đăng xuất  |
+| **User Model**     | Truy vấn dữ liệu người dùng |
+| **Session**        | Lưu trạng thái đăng nhập    |
+| **View**           | Hiển thị form login         |
+| **Router**         | Điều hướng theo role        |
+
+START
+  ↓
+User truy cập /login
+  ↓
+POST?
+ ├─ NO → Hiển thị form
+ └─ YES
+     ↓
+  Kiểm tra email
+     ↓
+  So sánh mật khẩu
+     ↓
+ ├─ Sai → Hiển thị lỗi
+ └─ Đúng
+     ↓
+  Lưu session
+     ↓
+  Phân quyền
+     ↓
+  Redirect
+Người dùng → Mở trang login
+          → Nhập email + mật khẩu
+          → Submit form (POST)
+          → Controller xác thực
+          → Lưu session
+          → Điều hướng theo role
