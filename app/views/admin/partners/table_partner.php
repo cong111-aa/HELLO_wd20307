@@ -49,3 +49,14 @@ function showPartners($partners)
     </table>
 
 <?php } ?>
+Người dùng
+   ↓
+index.php (Router)
+   ↓
+PartnerController
+   ↓
+Model (PartnerModel)
+   ↓
+Database
+   ↑
+View (HTML + PHP)

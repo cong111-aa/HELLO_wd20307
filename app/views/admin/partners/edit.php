@@ -47,3 +47,11 @@
     <button class="btn btn-primary">Lưu thay đổi</button>
     <a href="index.php?controller=partner&action=index" class="btn btn-secondary">Quay lại</a>
 </form>
+Người dùng → Chọn "Sửa" đối tác
+          → Controller lấy dữ liệu theo ID
+          → View hiển thị form (đổ dữ liệu cũ)
+          → Người dùng chỉnh sửa
+          → Submit form (POST)
+          → Controller xử lý cập nhật
+          → Model update CSDL
+          → Chuyển về danh sách

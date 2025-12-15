@@ -28,3 +28,18 @@ class AdminDiaryController extends Controller
         );
     }
 }
+Admin
+ ↓
+Chọn "Quản lý nhật ký tour"
+ ↓
+assignmentList()
+ ↓
+Hiển thị danh sách assignment
+ ↓
+Admin chọn 1 assignment
+ ↓
+history()?assignment_id=...
+ ↓
+Lấy nhật ký tour theo assignment
+ ↓
+Hiển thị danh sách nhật ký
